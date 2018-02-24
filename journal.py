@@ -9,18 +9,7 @@ import json
 import cPickle as pickle
 import os.path
 
-'''
-
-Journal GUI
-
- -[name]-----------
-| [date]           |
-| +text_area++++++ |
-| +              + |
-| ++++++++++++++++ |
-|__________________
-
-'''
+#============================================================
 
 APP_WIDTH, APP_HEIGHT = 600,600
 
@@ -42,6 +31,33 @@ def date_o_to_s(odate, _format=DATE_FORMAT):
 
 def stoday():
 	return date_o_to_s(datetime.today())
+
+#============================================================
+
+class DialogRename:
+	def __init__(self, parent, default):
+		top = self.top = Toplevel(parent)
+		self.value = default
+
+		Label(top, text="Enter name for journal").pack()
+
+		self.e = Entry(top)
+		self.bok = Button(top, text="OK", command=self.ok)
+		self.bcancel = Button(top, text="Cancel", command=self.cancel)
+		self.e.insert(0, default)
+		self.e.focus()
+
+		self.e.pack(padx=5)
+		self.bok.pack(pady=5,padx=10,side=LEFT,ipadx=10)
+		self.bcancel.pack(pady=5,padx=10,side=RIGHT,ipadx=5)
+
+	def ok(self):
+		self.value = self.e.get()
+		self.top.destroy()
+
+	def cancel(self):
+		self.top.destroy()
+
 #============================================================
 class JournalEncoder(json.JSONEncoder):
 	def default(self, obj):
@@ -209,6 +225,7 @@ class JournalDisplay(Journal):
 
 	def load(self, file_name=None):
 		f = tkFileDialog.askopenfile(mode='r') if file_name is None else open(file_name, "r")
+		if f is None: return
 		decoded_journal = self.decode_json(f)
 		self.name = decoded_journal.name
 		self.entries = decoded_journal.entries
@@ -245,30 +262,6 @@ class JournalDisplay(Journal):
 j = JournalDisplay() 
 if os.path.exists(j.file_path):
 	j.load(j.file_path)
-
-class DialogRename:
-	def __init__(self, parent, default):
-		top = self.top = Toplevel(parent)
-		self.value = default
-
-		Label(top, text="Enter name for journal").pack()
-
-		self.e = Entry(top)
-		self.bok = Button(top, text="OK", command=self.ok)
-		self.bcancel = Button(top, text="Cancel", command=self.cancel)
-		self.e.insert(0, default)
-		self.e.focus()
-
-		self.e.pack(padx=5)
-		self.bok.pack(pady=5,padx=10,side=LEFT,ipadx=10)
-		self.bcancel.pack(pady=5,padx=10,side=RIGHT,ipadx=5)
-
-	def ok(self):
-		self.value = self.e.get()
-		self.top.destroy()
-
-	def cancel(self):
-		self.top.destroy()
 
 #============================================================
 
