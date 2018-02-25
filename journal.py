@@ -129,12 +129,13 @@ class JournalDisplay(Journal):
 	"""docstring for Journal"""
 	def __init__(self, name="My Journal", file_path=None):
 		super(JournalDisplay, self).__init__(name)
-		self.file_path = DEFAULT_DIR + name + DEFAULT_EXTENSION if file_path is None else file_path
+		self.file_path = file_path
+		self.name = name
 		self.text = Text(master)
 		self.date = Label(master)
 		self.back = Button(master, text="◀")
 		self.next = Button(master, text="▶")
-		master.title(self.name)
+		self.rename(name)
 		self.init_grid()
 		self.init_events()
 		self.set_date()
@@ -209,11 +210,14 @@ class JournalDisplay(Journal):
 	def day_next(self):
 		self.set_journal_day(date_o_to_s(self.get_odate() + timedelta(days=1)))
 
-	def rename(self):
-		d = DialogRename(master, self.name)
-		d.top.grab_set()
-		master.wait_window(d.top)
-		self.name = d.value		
+	def rename(self, value=None):
+		if value is None:
+			d = DialogRename(master, self.name)
+			d.top.grab_set()
+			master.wait_window(d.top)
+			value = d.value
+		self.name = value
+		self.file_path = DEFAULT_DIR + self.name + DEFAULT_EXTENSION #if self.file_path is None else self.file_path
 		master.title(self.name)
 
 	#=== save/load journal ===#
@@ -231,8 +235,8 @@ class JournalDisplay(Journal):
 		self.entries = decoded_journal.entries
 		f.close()
 		self.set_today()
-		print self.name
-		master.title(self.name)
+		self.rename(self.name)
+		print self.name,self.file_path
 
 
 	def save(self):
