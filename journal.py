@@ -140,6 +140,7 @@ class JournalDisplay(Journal):
 		self.init_events()
 		self.set_date()
 
+
 	def init_grid(self):
 		# putting objects on grid
 		self.back.grid(row=0, column=0, sticky=W)
@@ -168,7 +169,7 @@ class JournalDisplay(Journal):
 		master.bind('<Control-o>', self.cb_load) # open = load
 
 	def get_stext(self):
-		return str(self.text.get("1.0",END))
+		return str(self.text.get("1.0",END))[:-1] # DUE TO BUG in get method, it adds \n so i need to strip it
 
 	def get_sdate(self): # get the string of a date of current entry
 		return str(self.date['text'])
@@ -236,8 +237,6 @@ class JournalDisplay(Journal):
 		f.close()
 		self.set_today()
 		self.rename(self.name)
-		print self.name,self.file_path
-
 
 	def save(self):
 		self.update_text()
